@@ -1,0 +1,64 @@
+# SPDX-License-Identifier: MIT
+# Copyright 2026 Free van Nieuwenhove
+#
+# Handleiding voor eindgebruikers van ZENiX Bridge.
+# Publiceren gebeurt automatisch: .github/workflows/docs.yml bouwt dit en zet
+# het op GitHub Pages.
+
+site_name: ZENiX Bridge
+site_description: Handleiding — ZENiX-projectbestanden omzetten naar Excel en terug
+site_url: https://freevn.github.io/ZENiX-Bridge/
+repo_url: https://github.com/FreeVN/ZENiX-Bridge
+repo_name: FreeVN/ZENiX-Bridge
+edit_uri: edit/main/docs/
+docs_dir: docs
+copyright: © 2026 Free van Nieuwenhove
+
+theme:
+  name: material
+  language: nl
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: red
+      accent: red
+      toggle:
+        icon: material/weather-night
+        name: Donker
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: red
+      accent: red
+      toggle:
+        icon: material/weather-sunny
+        name: Licht
+  features:
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+
+nav:
+  - ZENiX Bridge: index.md
+  - Installeren: installatie.md
+  - Je sleutel: sleutels.md
+  - Naar Excel: naar-excel.md
+  - Excel bewerken: bewerken.md
+  - Terug naar een project: terug-naar-project.md
+  - Command line & Docker: cli.md
+  - Als het niet werkt: problemen.md
+  - Hoe het werkt: technisch.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+
+extra:
+  generator: false

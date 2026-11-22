@@ -1,0 +1,75 @@
+# Installeren
+
+De app is één bestand per platform. Er is geen installatieprogramma, geen Java
+op je systeem nodig en geen configuratiemap: de JRE zit in de binary.
+
+## Windows 10/11 (x64)
+
+1. Download `ZENiXBridge.exe` van de [releases-pagina](https://github.com/FreeVN/zenix-ringbus-tool/releases).
+2. Maak een map, bijvoorbeeld `C:\Tools\ZENiX Bridge\`, en zet de exe erin.
+3. Zet `keys.txt` in dezelfde map — zie [Je sleutel](sleutels.md).
+4. Dubbelklikken.
+
+!!! tip "Eerste start"
+    De eerste start duurt enkele seconden: een onefile-app pakt zichzelf uit in
+    `%TEMP%`. Daarna gaat het snel. Windows SmartScreen kan waarschuwen omdat de
+    exe niet ondertekend is: *Meer informatie → Toch uitvoeren*.
+
+## Linux (x64)
+
+```bash
+chmod +x ZENiXBridge-linux
+./ZENiXBridge-linux selftest
+```
+
+`keys.txt` hoort naast de binary. De Linux-build heeft **geen venster**: je
+gebruikt de [command line](cli.md).
+
+## Raspberry Pi en andere ARM-toestellen
+
+De kant-en-klare binary is x86-64. Op een Pi gebruik je de Python-versie:
+
+```bash
+apt-get install -y default-jre-headless
+python3 -m venv /opt/zenix/venv
+/opt/zenix/venv/bin/pip install cryptography openpyxl
+# zet de map app/ van de repo in /opt/zenix/app
+printf '#!/bin/sh\nexec /opt/zenix/venv/bin/python /opt/zenix/app/zenix_cli.py "$@"\n' \
+  > /usr/local/bin/zenix && chmod +x /usr/local/bin/zenix
+zenix selftest
+```
+
+Daarna gebruik je `zenix` zoals `ZENiXBridge-linux`.
+
+## Docker
+
+```bash
+docker run --rm -v "$PWD:/data" -e ZENIX_KEY=<hex> \
+  ghcr.io/freevn/zenix-bridge to-xlsx /data/project.rbtproject /data/project.xlsx
+```
+
+Of met een sleutelbestand in plaats van een omgevingsvariabele:
+
+```bash
+docker run --rm -v "$PWD:/data" -v "$PWD/keys.txt:/opt/zenix/keys.txt:ro" \
+  ghcr.io/freevn/zenix-bridge to-project /data/project.xlsx /data/nieuw.rbtproject
+```
+
+## Controleren of alles werkt
+
+```bash
+ZENiXBridge-linux selftest
+```
+
+```json
+{"java": ".../jre/bin/java", "jars": [["configuration-1.4.1.jar", true],
+ ["jaxb-api.jar", true]], "keys": 1, "java_check": [true, "ok"]}
+```
+
+`java_check` doet een echte aanroep van de Java-helper: zo weet je dat de
+meegeleverde JRE de classes kan laden, niet alleen dat `java` bestaat.
+
+## Updaten
+
+Nieuwe versie downloaden en de oude exe vervangen. `keys.txt` blijft staan — die
+staat ernaast, niet erin.
