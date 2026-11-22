@@ -41,7 +41,7 @@ theme:
     - toc.follow
 
 nav:
-  - ZENiX Bridge: index.md
+  - Wat is het: index.md
   - Installeren: installatie.md
   - Je sleutel: sleutels.md
   - Naar Excel: naar-excel.md
