@@ -13,7 +13,7 @@ op je systeem nodig: de JRE zit in de binary.
 
 ## Windows 10/11 (x64)
 
-1. Download `ZENiXBridge.exe` van de [releases-pagina](https://github.com/FreeVN/zenix-ringbus-tool/releases).
+1. Download `ZENiXBridge.exe` van de [releases-pagina](https://github.com/FreeVN/ZENiX-Bridge/releases).
 2. Maak een map, bijvoorbeeld `C:\Tools\ZENiX Bridge\`, en zet de exe erin.
 3. Zet `keys.txt` in dezelfde map — zie [Je sleutel](sleutels.md).
 4. Dubbelklikken.
@@ -23,19 +23,11 @@ op je systeem nodig: de JRE zit in de binary.
     `%TEMP%`. Daarna gaat het snel. Windows SmartScreen kan waarschuwen omdat de
     exe niet ondertekend is: *Meer informatie → Toch uitvoeren*.
 
-## Linux (x64)
+## Linux, Pi of een server
 
-```bash
-chmod +x ZENiXBridge-linux
-./ZENiXBridge-linux selftest
-```
-
-`keys.txt` hoort naast de binary. De Linux-build heeft **geen venster**: je
-gebruikt de [command line](cli.md).
-
-## Raspberry Pi en andere ARM-toestellen
-
-De kant-en-klare binary is x86-64. Op een Pi gebruik je de Python-versie:
+Er is **geen kant-en-klare Linux-binary en geen Docker-image**: de RingBus Tool
+draait enkel op Windows, en zonder die installatie heb je de vendor-bibliotheek
+niet. De CLI bestaat wel nog en draait overal waar Python en Java staan:
 
 ```bash
 apt-get install -y default-jre-headless
@@ -47,26 +39,13 @@ printf '#!/bin/sh\nexec /opt/zenix/venv/bin/python /opt/zenix/app/zenix_cli.py "
 zenix selftest
 ```
 
-Daarna gebruik je `zenix` zoals `ZENiXBridge-linux`.
-
-## Docker
-
-```bash
-docker run --rm -v "$PWD:/data" -e ZENIX_KEY=<hex> \
-  ghcr.io/freevn/zenix-bridge to-xlsx /data/project.rbtproject /data/project.xlsx
-```
-
-Of met een sleutelbestand in plaats van een omgevingsvariabele:
-
-```bash
-docker run --rm -v "$PWD:/data" -v "$PWD/keys.txt:/opt/zenix/keys.txt:ro" \
-  ghcr.io/freevn/zenix-bridge to-project /data/project.xlsx /data/nieuw.rbtproject
-```
+Zie [Command line](cli.md) voor de commando's.
 
 ## Controleren of alles werkt
 
 ```bash
-ZENiXBridge-linux selftest
+zenix selftest          # Linux/server, uit de bron
+ZENiXBridge.exe --selftest   # Windows
 ```
 
 ```json

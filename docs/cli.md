@@ -1,16 +1,20 @@
-# Command line & Docker
+# Command line (uit de bron)
 
-De Linux-binary, de Pi-installatie en het Docker-image gebruiken dezelfde CLI.
+De CLI zit in `app/zenix_cli.py`. Er is geen kant-en-klare Linux-binary of
+Docker-image meer: de RingBus Tool draait enkel op Windows. Op een server of Pi
+draai je de CLI met Python uit de bron.
 
 ## Commando's
 
 ```
-ZENiXBridge-linux to-xlsx    <project.rbtproject> [out.xlsx]
-ZENiXBridge-linux to-project <werkboek.xlsx>      [out.rbtproject]
-ZENiXBridge-linux keys                  # geladen sleutels + key-ids
-ZENiXBridge-linux read-key [project]    # sleutel(s) uit de dongle
-ZENiXBridge-linux selftest              # JRE, jars en classes controleren
+python3 app/zenix_cli.py to-xlsx    <project.rbtproject> [out.xlsx]
+python3 app/zenix_cli.py to-project <werkboek.xlsx>      [out.rbtproject]
+python3 app/zenix_cli.py keys                  # geladen sleutels + key-ids
+python3 app/zenix_cli.py read-key [project]    # sleutel(s) uit de dongle
+python3 app/zenix_cli.py selftest              # JRE, vendor-jars en classes
 ```
+
+Op Windows doet `ZENiXBridge.exe --selftest` hetzelfde.
 
 Elk commando print JSON, zodat je het in scripts kan opvangen:
 
@@ -23,21 +27,15 @@ Elk commando print JSON, zodat je het in scripts kan opvangen:
 
 ```bash
 for f in projecten/*.rbtproject; do
-  ZENiXBridge-linux to-xlsx "$f" "${f%.rbtproject} - elementen.xlsx"
+  python3 app/zenix_cli.py to-xlsx "$f" "${f%.rbtproject} - elementen.xlsx"
 done
 ```
 
-## Docker
+## De vendor-bibliotheek
 
-```bash
-docker run --rm -v "$PWD:/data" -e ZENIX_KEY=<hex> \
-  ghcr.io/freevn/zenix-bridge to-xlsx /data/project.rbtproject /data/project.xlsx
-```
-
-- Werkmap is `/data`; mount daar je projecten.
-- Sleutel meegeven met `-e ZENIX_KEY=<hex>` of met een mount:
-  `-v "$PWD/keys.txt:/opt/zenix/keys.txt:ro"`.
-- Image: `ghcr.io/freevn/zenix-bridge:latest` (ook per versie, bv. `:v2.0.0`).
+De CLI heeft `configuration-*.jar` nodig. Die komt uit je RingBus Tool-installatie
+of uit de map waarnaar `RINGBUSTOOL_HOME` wijst (de map met
+`ringbustool/modules`). Ontbreekt ze, dan stopt de CLI met een duidelijke melding.
 
 ## In een cron of systemd-timer
 

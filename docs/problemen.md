@@ -11,7 +11,8 @@
 ## `Geen sleutel gevonden`
 
 `keys.txt` ontbreekt of staat niet naast de app. Zie [Je sleutel](sleutels.md).
-Bij de Linux-binary is dat de map van de binary, bij Windows de map van de exe.
+Op Windows is dat de map van de exe; draai je de CLI uit de bron, dan de map
+waar `zenix_cli.py` staat (of `ZENIX_KEY`).
 
 ## `Geen van de N sleutels opent dit project`
 
@@ -31,14 +32,14 @@ van die installatie uit.
 Je werkt in een Remote Desktop-sessie. De dongle weigert dan. Gebruik een gewone
 console-sessie of een geplande taak onder SYSTEM.
 
-## `Java niet gevonden` (Linux/Pi)
+## `Java niet gevonden`
+
+Enkel bij de CLI uit de bron (Linux, Pi, server): de Windows-exe draagt zijn eigen
+JRE, daar kan deze melding niet voorkomen.
 
 ```bash
 apt-get install -y default-jre-headless
 ```
-
-De Windows- en Linux-binary dragen hun eigen JRE; daar kan deze melding niet
-voorkomen.
 
 ## `JRE te oud voor de meegeleverde classes`
 

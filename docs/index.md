@@ -1,15 +1,14 @@
 # ZENiX Bridge — handleiding
 
 !!! info "Versie"
-    Deze handleiding hoort bij **ZENiX Bridge 2.1.0**. De app en de binaries
-    staan in de privé-repo `FreeVN/zenix-ringbus-tool`.
+    Deze handleiding hoort bij **ZENiX Bridge 2.3.0**. De exe staat op de
+    [releases-pagina](https://github.com/FreeVN/ZENiX-Bridge/releases).
 
 !!! note "Twee producten, één code-repo"
     **ZENiX Bridge** (deze handleiding) converteert `.rbtproject` ⇄ Excel.
     De **ZENiX Ringbus Editor** is een aparte web-UI in dezelfde code-repo die
     het project rechtstreeks bewerkt — met een [eigen handleiding](https://freevn.github.io/ZENiX-Editor/).
-    Verwar de namen niet: alleen de Bridge heeft `ZENiXBridge.exe`,
-    `ZENiXBridge-linux` en het Docker-image.
+    Verwar de namen niet: alleen de Bridge heeft een `ZENiXBridge.exe`.
 
 ZENiX Bridge is een **tweerichtingsconverter** voor ZENiX-projectbestanden
 (Rf-Technologies brandkleppen). Je sleept een `.rbtproject` op de app en krijgt
@@ -57,7 +56,7 @@ Eerst de app aan de praat krijgen? [Installeren](installatie.md) en
 
 ## Wat je nodig hebt
 
-- Windows 10/11, Linux (x64) of Docker.
+- Windows 10/11 (x64).
 - De **projectsleutel** van het project — zonder sleutel opent niets. Hoe je die
   regelt, staat in [Je sleutel](sleutels.md).
 - Voor het uitlezen van een dongle: een geïnstalleerde Ringbus Tool en de dongle

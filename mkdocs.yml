@@ -47,7 +47,7 @@ nav:
   - Naar Excel: naar-excel.md
   - Excel bewerken: bewerken.md
   - Terug naar een project: terug-naar-project.md
-  - Command line & Docker: cli.md
+  - Command line: cli.md
   - Als het niet werkt: problemen.md
   - Hoe het werkt: technisch.md
 
