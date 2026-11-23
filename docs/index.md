@@ -1,14 +1,14 @@
 # ZENiX Bridge — handleiding
 
 !!! info "Versie"
-    Deze handleiding hoort bij **ZENiX Bridge 2.3.0**. De exe staat op de
+    Deze handleiding hoort bij **ZENiX Bridge 2.3.1**. De exe staat op de
     [releases-pagina](https://github.com/FreeVN/ZENiX-Bridge/releases).
 
-!!! note "Twee producten, één code-repo"
+!!! note "Los van de Ringbus Editor"
     **ZENiX Bridge** (deze handleiding) converteert `.rbtproject` ⇄ Excel.
-    De **ZENiX Ringbus Editor** is een aparte web-UI in dezelfde code-repo die
-    het project rechtstreeks bewerkt — met een [eigen handleiding](https://freevn.github.io/ZENiX-Editor/).
-    Verwar de namen niet: alleen de Bridge heeft een `ZENiXBridge.exe`.
+    De **ZENiX Ringbus Editor** is een **ander product**: een web-UI met een eigen
+    repo (<https://github.com/FreeVN/ZENiX-Editor>) en een eigen exe
+    (`ZENiXEditor.exe`). Alleen de Bridge heeft `ZENiXBridge.exe`.
 
 ZENiX Bridge is een **tweerichtingsconverter** voor ZENiX-projectbestanden
 (Rf-Technologies brandkleppen). Je sleept een `.rbtproject` op de app en krijgt
