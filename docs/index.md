@@ -7,8 +7,9 @@
 !!! note "Twee producten, één code-repo"
     **ZENiX Bridge** (deze handleiding) converteert `.rbtproject` ⇄ Excel.
     De **ZENiX Ringbus Editor** is een aparte web-UI in dezelfde code-repo die
-    het project rechtstreeks bewerkt. Verwar de namen niet: alleen de Bridge
-    heeft `ZENiXBridge.exe`, `ZENiXBridge-linux` en het Docker-image.
+    het project rechtstreeks bewerkt — met een [eigen handleiding](https://freevn.github.io/ZENiX-Editor/).
+    Verwar de namen niet: alleen de Bridge heeft `ZENiXBridge.exe`,
+    `ZENiXBridge-linux` en het Docker-image.
 
 ZENiX Bridge is een **tweerichtingsconverter** voor ZENiX-projectbestanden
 (Rf-Technologies brandkleppen). Je sleept een `.rbtproject` op de app en krijgt

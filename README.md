@@ -19,5 +19,5 @@ Deze repo bevat **enkel documentatie**. De app zelf staat in de privé-repo
 > **Niet hetzelfde als de Ringbus Editor.** In diezelfde code-repo zit ook de
 > **ZENiX Ringbus Editor**: een web-UI die het project rechtstreeks in de browser
 > bewerkt (elementen, zones, ringen, alarmen, controlematrix). Dat is een **ander**
-> product, met eigen docs (`docs/RINGBUS-EDITOR.md`) en eigen tags (`editor-v*`).
-> De Bridge gebruikt `bridge-v*`.
+> product, met een eigen handleiding op <https://freevn.github.io/ZENiX-Editor/> en
+> eigen tags (`editor-v*`). De Bridge gebruikt `bridge-v*`.
