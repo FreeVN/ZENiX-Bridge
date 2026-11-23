@@ -1,48 +1,43 @@
-# Command line & Docker
+# Command line
 
-De Linux-binary, de Pi-installatie en het Docker-image gebruiken dezelfde CLI.
+De Windows-exe heeft ook een CLI. Handig voor scripts en bulkwerk.
 
 ## Commando's
 
-```
-ZENiXBridge-linux to-xlsx    <project.rbtproject> [out.xlsx]
-ZENiXBridge-linux to-project <werkboek.xlsx>      [out.rbtproject]
-ZENiXBridge-linux keys                  # geladen sleutels + key-ids
-ZENiXBridge-linux read-key [project]    # sleutel(s) uit de dongle
-ZENiXBridge-linux selftest              # JRE, jars en classes controleren
+```bat
+ZENiXBridge.exe to-xlsx    <project.rbtproject> [out.xlsx]
+ZENiXBridge.exe to-project <werkboek.xlsx>      [out.rbtproject]
+ZENiXBridge.exe keys                  :: geladen sleutels + key-ids
+ZENiXBridge.exe read-key [project]    :: sleutel(s) uit de dongle
+ZENiXBridge.exe selftest              :: JRE, jars en classes controleren
 ```
 
 Elk commando print JSON, zodat je het in scripts kan opvangen:
 
 ```json
 {"project": "Duizendpoot", "elements": 23, "zones": 2, "rings": 1,
- "out": "/data/Duizendpoot - elementen.xlsx"}
+ "out": "C:\\werk\\Duizendpoot - elementen.xlsx"}
 ```
 
-## Voorbeeld: in bulk omzetten
+## Voorbeeld: in bulk omzetten (PowerShell)
 
-```bash
-for f in projecten/*.rbtproject; do
-  ZENiXBridge-linux to-xlsx "$f" "${f%.rbtproject} - elementen.xlsx"
-done
+```powershell
+Get-ChildItem projecten\*.rbtproject | ForEach-Object {
+  .\ZENiXBridge.exe to-xlsx $_.FullName ($_.FullName -replace '\.rbtproject$',' - elementen.xlsx')
+}
 ```
 
-## Docker
+## In een geplande taak
 
-```bash
-docker run --rm -v "$PWD:/data" -e ZENIX_KEY=<hex> \
-  ghcr.io/freevn/zenix-bridge to-xlsx /data/project.rbtproject /data/project.xlsx
-```
-
-- Werkmap is `/data`; mount daar je projecten.
-- Sleutel meegeven met `-e ZENIX_KEY=<hex>` of met een mount:
-  `-v "$PWD/keys.txt:/opt/zenix/keys.txt:ro"`.
-- Image: `ghcr.io/freevn/zenix-bridge:latest` (ook per versie, bv. `:v2.0.0`).
-
-## In een cron of systemd-timer
-
-```bash
-ZENIX_KEY=$(cat /etc/zenix/key) /usr/local/bin/zenix to-xlsx /srv/project.rbtproject /srv/export/project.xlsx
+```bat
+set ZENIX_KEY=<hex>
+"C:\Tools\ZENiX Bridge\ZENiXBridge.exe" to-xlsx "C:\werk\project.rbtproject" "C:\export\project.xlsx"
 ```
 
 De CLI geeft exitcode 0 bij succes en 1 bij een fout, met de reden op stderr.
+
+## Linux, Raspberry Pi en Docker
+
+Die builds worden niet meer gemaakt. De RingBus Tool draait enkel op Windows, en
+de app heeft de vendor-bibliotheek uit die installatie nodig. Gebruik de
+Windows-exe.

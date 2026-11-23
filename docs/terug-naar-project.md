@@ -2,8 +2,8 @@
 
 Sleep het bewerkte `.xlsx` terug op de app, of:
 
-```bash
-ZENiXBridge-linux to-project "project - elementen.xlsx"
+```bat
+ZENiXBridge.exe to-project "project - elementen.xlsx"
 ```
 
 Je krijgt `… - aangepast.rbtproject`. Het bronbestand blijft ongemoeid.

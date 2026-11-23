@@ -1,11 +1,24 @@
 # Installeren
 
-De app is één bestand per platform. Er is geen installatieprogramma, geen Java
-op je systeem nodig en geen configuratiemap: de JRE zit in de binary.
+De app is één bestand: `ZENiXBridge.exe`. Er is geen installatieprogramma en geen
+Java op je systeem nodig — de JRE zit in de binary. Wat **niet** in de binary
+zit, is de vendor-bibliotheek van de RingBus Tool: die haalt de app uit je
+bestaande RingBus Tool-installatie.
+
+## Vereiste: de RingBus Tool
+
+Installeer eerst de **ZENiX RingBus Tool** (van Rf-Technologies) op dezelfde pc.
+De app gebruikt daaruit:
+
+- `configuration-1.4.1.jar` — de vendor-bibliotheek voor het projectformaat;
+- de USB-dongle-route, als je die gebruikt.
+
+Staat de RingBus Tool ergens anders dan in `Program Files`, zet dan de
+omgevingsvariabele `RINGBUSTOOL_HOME` naar die map.
 
 ## Windows 10/11 (x64)
 
-1. Download `ZENiXBridge.exe` van de [releases-pagina](https://github.com/FreeVN/zenix-ringbus-tool/releases).
+1. Download `ZENiXBridge.exe` van de [releases-pagina](https://github.com/FreeVN/ZENiX-Bridge/releases).
 2. Maak een map, bijvoorbeeld `C:\Tools\ZENiX Bridge\`, en zet de exe erin.
 3. Zet `keys.txt` in dezelfde map — zie [Je sleutel](sleutels.md).
 4. Dubbelklikken.
@@ -15,61 +28,34 @@ op je systeem nodig en geen configuratiemap: de JRE zit in de binary.
     `%TEMP%`. Daarna gaat het snel. Windows SmartScreen kan waarschuwen omdat de
     exe niet ondertekend is: *Meer informatie → Toch uitvoeren*.
 
-## Linux (x64)
-
-```bash
-chmod +x ZENiXBridge-linux
-./ZENiXBridge-linux selftest
-```
-
-`keys.txt` hoort naast de binary. De Linux-build heeft **geen venster**: je
-gebruikt de [command line](cli.md).
-
-## Raspberry Pi en andere ARM-toestellen
-
-De kant-en-klare binary is x86-64. Op een Pi gebruik je de Python-versie:
-
-```bash
-apt-get install -y default-jre-headless
-python3 -m venv /opt/zenix/venv
-/opt/zenix/venv/bin/pip install cryptography openpyxl
-# zet de map app/ van de repo in /opt/zenix/app
-printf '#!/bin/sh\nexec /opt/zenix/venv/bin/python /opt/zenix/app/zenix_cli.py "$@"\n' \
-  > /usr/local/bin/zenix && chmod +x /usr/local/bin/zenix
-zenix selftest
-```
-
-Daarna gebruik je `zenix` zoals `ZENiXBridge-linux`.
-
-## Docker
-
-```bash
-docker run --rm -v "$PWD:/data" -e ZENIX_KEY=<hex> \
-  ghcr.io/freevn/zenix-bridge to-xlsx /data/project.rbtproject /data/project.xlsx
-```
-
-Of met een sleutelbestand in plaats van een omgevingsvariabele:
-
-```bash
-docker run --rm -v "$PWD:/data" -v "$PWD/keys.txt:/opt/zenix/keys.txt:ro" \
-  ghcr.io/freevn/zenix-bridge to-project /data/project.xlsx /data/nieuw.rbtproject
-```
+!!! warning "RingBus Tool niet gevonden"
+    Dan stopt de app met een duidelijke melding. Installeer de RingBus Tool, of
+    zet `RINGBUSTOOL_HOME` naar de installatiemap. De app werkt niet zonder die
+    bibliotheek.
 
 ## Controleren of alles werkt
 
-```bash
-ZENiXBridge-linux selftest
+Dubbelklik de exe en kies **zelftest**, of vanaf de command line:
+
+```bat
+ZENiXBridge.exe selftest
 ```
 
 ```json
-{"java": ".../jre/bin/java", "jars": [["configuration-1.4.1.jar", true],
- ["jaxb-api.jar", true]], "keys": 1, "java_check": [true, "ok"]}
+{"java": "...\\jre\\bin\\java.exe", "jars": [["configuration-1.4.1.jar", true]],
+ "keys": 1, "java_check": [true, "ok"]}
 ```
 
 `java_check` doet een echte aanroep van de Java-helper: zo weet je dat de
-meegeleverde JRE de classes kan laden, niet alleen dat `java` bestaat.
+meegeleverde JRE de classes kan laden, niet alleen dat `java` bestaat. Staat
+`jars` leeg, dan is de RingBus Tool niet gevonden.
 
 ## Updaten
 
 Nieuwe versie downloaden en de oude exe vervangen. `keys.txt` blijft staan — die
 staat ernaast, niet erin.
+
+## Linux, Raspberry Pi en Docker
+
+Die builds worden niet meer gemaakt. De RingBus Tool van ZENiX draait enkel op
+Windows, en de app is de schil errond. Gebruik de Windows-versie.

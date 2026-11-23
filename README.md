@@ -1,6 +1,6 @@
 # ZENiX Bridge — handleiding
 
-De handleiding van [ZENiX Bridge](https://github.com/FreeVN/zenix-ringbus-tool):
+De handleiding van [ZENiX Bridge](https://github.com/FreeVN/ZENiX-Bridge/releases):
 een tweerichtingsconverter tussen ZENiX-projectbestanden (`.rbtproject`) en Excel.
 
 **Lezen kan hier: <https://freevn.github.io/ZENiX-Bridge/>**

@@ -61,6 +61,6 @@ nieuwe machine: kopieer `keys.txt` mee.
 ## Sleutels beheren
 
 ```bash
-ZENiXBridge-linux keys          # aantal sleutels + key-ids
-ZENiXBridge-linux read-key      # dongle uitlezen en toevoegen
+ZENiXBridge.exe keys            :: aantal sleutels + key-ids
+ZENiXBridge.exe read-key        :: dongle uitlezen en toevoegen
 ```

@@ -2,8 +2,8 @@
 
 Sleep een `.rbtproject` op de app, of:
 
-```bash
-ZENiXBridge-linux to-xlsx project.rbtproject
+```bat
+ZENiXBridge.exe to-xlsx project.rbtproject
 ```
 
 Je krijgt `project - elementen.xlsx` naast het bronbestand. Het origineel wordt

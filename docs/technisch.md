@@ -59,8 +59,8 @@ vast te stellen door een vreemd project te proberen.
 - `jlink` bouwt een JRE 17 met enkel de nodige modules; die gaat mee in de binary.
 - De Java-helper is voor **Java 17** gecompileerd (classversie 61).
 - PyInstaller maakt één bestand per platform; GitHub Actions bouwt Windows en
-  Linux, draait een zelftest en publiceert bij een tag de binaries + het
-  Docker-image.
+  draait een zelftest en publiceert bij een tag de exe. Alleen Windows: de
+  RingBus Tool draait nergens anders.
 
 De zelftest roept de Java-helper echt aan. Een binary die alleen controleert of
 `java` bestaat, kan stilletjes sterven op het eerste echte bestand — dat is
