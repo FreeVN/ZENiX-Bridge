@@ -1,7 +1,7 @@
 # ZENiX Bridge — handleiding
 
 !!! info "Versie"
-    Deze handleiding hoort bij **ZENiX Bridge 2.0.0**. De app en de binaries
+    Deze handleiding hoort bij **ZENiX Bridge 2.1.0**. De app en de binaries
     staan in de privé-repo `FreeVN/zenix-ringbus-tool`.
 
 ZENiX Bridge is een **tweerichtingsconverter** voor ZENiX-projectbestanden
