@@ -1,7 +1,15 @@
 # Installeren
 
-De app is één bestand per platform. Er is geen installatieprogramma, geen Java
-op je systeem nodig en geen configuratiemap: de JRE zit in de binary.
+De app is één bestand per platform. Er is geen installatieprogramma en geen Java
+op je systeem nodig: de JRE zit in de binary.
+
+!!! warning "RingBus Tool moet geïnstalleerd zijn"
+    Vanaf **2.2.0** zit de vendor-bibliotheek (`configuration-*.jar`,
+    `jaxb-api.jar`) **niet meer** in de binary — die wordt uit je RingBus
+    Tool-installatie geladen. Staat de RingBus Tool niet in het standaardpad,
+    zet dan `RINGBUSTOOL_HOME` naar de installatiemap (de map die
+    `ringbustool/modules` bevat). Zonder die bibliotheek kan de app geen project
+    openen; ze zegt dat dan ook duidelijk.
 
 ## Windows 10/11 (x64)
 
