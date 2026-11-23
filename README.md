@@ -15,3 +15,10 @@ python3 -m venv .venv
 
 Deze repo bevat **enkel documentatie**. De app zelf staat in de privé-repo
 [FreeVN/zenix-ringbus-tool](https://github.com/FreeVN/zenix-ringbus-tool).
+
+!!! note "Niet hetzelfde als de Ringbus Editor"
+    In diezelfde code-repo zit ook de **ZENiX Ringbus Editor**: een web-UI die
+    het project rechtstreeks in de browser bewerkt (elementen, zones, ringen,
+    alarmen, controlematrix). Dat is een **ander** product, met eigen docs:
+    `docs/RINGBUS-EDITOR.md` in de code-repo. Releases staan er onder de tags
+    `editor-v*`; de Bridge gebruikt `bridge-v*`.
