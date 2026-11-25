@@ -29,5 +29,16 @@ python3 -m venv .venv && .venv/bin/pip install cryptography openpyxl
 ```
 
 De vendor-jar (`configuration*.jar`) komt uit je RingBus Tool-installatie of uit
-`RINGBUSTOOL_HOME`. `app/lib/jaxb-api.jar` zit in de repo en wordt door
-PyInstaller meegebundeld via `--add-data "app/lib;app/lib"`.
+`RINGBUSTOOL_HOME`. Ondersteunde indelingen:
+
+| RingBus Tool | Locatie van de vendor-jar | Java |
+|---|---|---|
+| 1.4.x | `modules/ext/configuration.jar` | 8 |
+| nieuwer | `modules/lib/configuration-<versie>.jar` | 8/17 |
+
+`app/lib/jaxb-api.jar` zit in de repo en wordt door PyInstaller meegebundeld via
+`--add-data "app/lib;app/lib"`. Die meegebundelde samengevoegde JAXB 2.3.1
+(API + implementatie + core + activation) is nodig omdat de vendor-bibliotheek
+JAXB verwacht dat niet in elke JRE (met name Java 11/17) meer aanwezig is.
+Zet nooit zelf een `configuration*.jar` in `app/lib`: vendor-jars blijven
+buiten de repo en buiten de exe.
