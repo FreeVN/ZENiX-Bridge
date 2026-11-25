@@ -1,9 +1,14 @@
 """Vendor-jar-resolutie: RingBus Tool-installatie eerst, app/lib als ontwikkelroute."""
 import os
+import zipfile
+from pathlib import Path
 
 import pytest
 
 import core
+
+APP_LIB_DIR = Path(__file__).resolve().parents[1] / "app" / "lib"
+BUNDLED_JAXB = APP_LIB_DIR / "jaxb-api.jar"
 
 
 def _make_install(root, jar_name="configuration-9.9.9.jar"):
@@ -199,6 +204,29 @@ def test_classpath_bevat_vendor_en_jaxb_jar(tmp_path, monkeypatch):
     assert parts[0].endswith(os.path.join("app", "build"))
     assert str(jar) in parts
     assert str(jaxb) in parts
+
+
+# ---------------- meegebundelde JAXB-jar (AC11) ----------------
+
+def test_gebundelde_jaxb_jar_is_geldige_api_en_impl():
+    """app/lib/jaxb-api.jar is een geldig archief met JAXB-API en -impl-klassen."""
+    assert BUNDLED_JAXB.is_file(), f"{BUNDLED_JAXB} ontbreekt"
+    with zipfile.ZipFile(BUNDLED_JAXB) as archive:
+        assert archive.testzip() is None
+        names = archive.namelist()
+
+    assert any(name.startswith("javax/xml/bind/") for name in names), (
+        "JAXB-API (javax/xml/bind) ontbreekt in de gebundelde jar")
+    assert any(name.startswith("com/sun/xml/bind/") for name in names), (
+        "JAXB-implementatie (com/sun/xml/bind) ontbreekt in de gebundelde jar")
+    assert any(name.startswith("javax/activation/") for name in names), (
+        "JAXB-activation (javax/activation) ontbreekt in de gebundelde jar")
+
+
+def test_app_lib_bevat_geen_vendor_jar():
+    """De repo/exe bevat nooit een configuration*.jar (auteursrecht)."""
+    leftovers = sorted(p.name for p in APP_LIB_DIR.glob("configuration*.jar"))
+    assert leftovers == [], f"vendor-jar hoort niet in de repo: {leftovers}"
 
 
 def test_classpath_zonder_vendor_jar_bestaande_fout(tmp_path, monkeypatch):
