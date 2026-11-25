@@ -14,7 +14,8 @@ app/
   xlsx_build.py  Excel opbouwen (gedeeld met de Google Sheets-variant)
   diff_edits.py  vergelijking bewerkte rijen vs. basis
   java/          ZenixTool.java (dump/apply), ZenixKey.java (dongle)
-  lib/           configuration-1.4.1.jar, jaxb-api.jar
+  lib/           jaxb-api.jar (meegebundeld, JAXB 2.3.1); configuration*.jar
+                 lokaal neerzetten om te ontwikkelen (nooit committen)
   build/         gecompileerde classes (Java 17, classversie 61)
   assets/        Montserrat (OFL)
 ```
@@ -26,3 +27,7 @@ python3 -m venv .venv && .venv/bin/pip install cryptography openpyxl
 .venv/bin/python app/zenix_cli.py selftest
 .venv/bin/python app/zenix_cli.py to-xlsx samples/Duizendpoot/Duizendpoot.rbtproject /tmp/x.xlsx
 ```
+
+De vendor-jar (`configuration*.jar`) komt uit je RingBus Tool-installatie of uit
+`RINGBUSTOOL_HOME`. `app/lib/jaxb-api.jar` zit in de repo en wordt door
+PyInstaller meegebundeld via `--add-data "app/lib;app/lib"`.

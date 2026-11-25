@@ -4,12 +4,30 @@ De app is één bestand per platform. Er is geen installatieprogramma en geen Ja
 op je systeem nodig: de JRE zit in de binary.
 
 !!! warning "RingBus Tool moet geïnstalleerd zijn"
-    Vanaf **2.2.0** zit de vendor-bibliotheek (`configuration-*.jar`,
-    `jaxb-api.jar`) **niet meer** in de binary — die wordt uit je RingBus
-    Tool-installatie geladen. Staat de RingBus Tool niet in het standaardpad,
-    zet dan `RINGBUSTOOL_HOME` naar de installatiemap (de map die
-    `ringbustool/modules` bevat). Zonder die bibliotheek kan de app geen project
-    openen; ze zegt dat dan ook duidelijk.
+    Vanaf **2.2.0** zit de vendor-bibliotheek (`configuration-*.jar`) **niet meer**
+    in de binary — die wordt uit je RingBus Tool-installatie geladen. Staat de
+    RingBus Tool niet in het standaardpad, zet dan `RINGBUSTOOL_HOME` naar de
+    installatiemap (de map die `ringbustool/modules` bevat), naar de
+    `ringbustool`-map zelf of naar de `modules`-map. Zonder die bibliotheek kan
+    de app geen project openen; ze zegt dat dan ook duidelijk.
+
+!!! info "JAXB zit wél in de app"
+    Vanaf **2.4.0** is een samengevoegde JAXB 2.3.1-jar meegebundeld
+    (`app/lib/jaxb-api.jar`). Je hoeft dus geen losse `jaxb-api.jar` uit de
+    RingBus Tool te gebruiken. Op Java 8 kan Java waarschuwen over overlappende
+    JAXB-klassen (die zitten ook in de JRE); dat is onschadelijk.
+
+## Ondersteunde RingBus Tool-versies
+
+| RingBus Tool | Vendor-jar | Java |
+|---|---|---|
+| 1.4.x (en ouder) | `modules/ext/configuration.jar` | 8 |
+| nieuwer | `modules/lib/configuration-<versie>.jar` | 8/17 |
+
+De app zoekt per modules-map eerst `lib/configuration-*.jar`, dan
+`lib/configuration.jar`, dan `ext/configuration-*.jar`, dan
+`ext/configuration.jar` en ten slotte `configuration*.jar` direct in `modules/`.
+Meerdere versies in dezelfde map: de alfabetisch eerste wint (deterministisch).
 
 ## Windows 10/11 (x64)
 
