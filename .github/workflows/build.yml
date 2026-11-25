@@ -47,13 +47,34 @@ jobs:
       - name: Controleer jar-beleid in de binary
         shell: pwsh
         run: |
-          $text = [System.Text.Encoding]::Latin1.GetString(
-            [System.IO.File]::ReadAllBytes("dist/ZENiXBridge.exe"))
-          $vendors = Get-ChildItem app/lib -Filter "configuration*.jar" -ErrorAction SilentlyContinue
-          if ($vendors) {
+          $exe = "dist/ZENiXBridge.exe"
+          # app/lib is de enige --add-data-bron voor jars; deze guard dekt die
+          # invoer af en is de eerste verdedigingslijn tegen vendor-jars.
+          $vendors = @(Get-ChildItem app/lib -Filter "configuration*.jar" -ErrorAction SilentlyContinue)
+          if ($vendors.Count -gt 0) {
             throw "vendor-jar hoort niet in de repo: $($vendors.Name -join ', ')"
           }
-          if (-not $text.Contains("jaxb-api.jar")) {
+          $text = [System.Text.Encoding]::Latin1.GetString(
+            [System.IO.File]::ReadAllBytes($exe))
+          # Scan de binary zelf op vendor-jars onder app/lib (rauwe tekst).
+          $leaked = [regex]::Matches($text, '(?i)app[\\/]lib[\\/]configuration[^\\/]*\.jar')
+          if ($leaked.Count -gt 0) {
+            throw "binary bevat een vendor-jar: $($leaked[0].Value)"
+          }
+          $jaxbInBinary = $text.Contains("jaxb-api.jar")
+          # Autoritatieve controle: de PyInstaller-archiefindex van de exe.
+          $viewer = Get-Command pyi-archive_viewer -ErrorAction SilentlyContinue
+          if ($viewer) {
+            $listing = & $viewer -l $exe 2>&1
+            if ($LASTEXITCODE -eq 0) {
+              $vendorHits = @($listing | Select-String -Pattern '(?i)configuration[^\\/]*\.jar')
+              if ($vendorHits.Count -gt 0) {
+                throw "binary bevat een vendor-jar: $($vendorHits[0].Line.Trim())"
+              }
+              $jaxbInBinary = @($listing | Select-String -Pattern '(?i)jaxb-api\.jar').Count -gt 0
+            }
+          }
+          if (-not $jaxbInBinary) {
             throw "binary bundelt jaxb-api.jar niet (--add-data app/lib ontbreekt?)"
           }
           Write-Host "geen vendor-jar gebundeld; jaxb-api.jar aanwezig"
