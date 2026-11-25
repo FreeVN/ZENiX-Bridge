@@ -14,7 +14,8 @@ app/
   xlsx_build.py  Excel opbouwen (gedeeld met de Google Sheets-variant)
   diff_edits.py  vergelijking bewerkte rijen vs. basis
   java/          ZenixTool.java (dump/apply), ZenixKey.java (dongle)
-  lib/           configuration-1.4.1.jar, jaxb-api.jar
+  lib/           jaxb-api.jar (meegebundeld, JAXB 2.3.1); configuration*.jar
+                 lokaal neerzetten om te ontwikkelen (nooit committen)
   build/         gecompileerde classes (Java 17, classversie 61)
   assets/        Montserrat (OFL)
 ```
@@ -26,3 +27,18 @@ python3 -m venv .venv && .venv/bin/pip install cryptography openpyxl
 .venv/bin/python app/zenix_cli.py selftest
 .venv/bin/python app/zenix_cli.py to-xlsx samples/Duizendpoot/Duizendpoot.rbtproject /tmp/x.xlsx
 ```
+
+De vendor-jar (`configuration*.jar`) komt uit je RingBus Tool-installatie of uit
+`RINGBUSTOOL_HOME`. Ondersteunde indelingen:
+
+| RingBus Tool | Locatie van de vendor-jar | Java |
+|---|---|---|
+| 1.4.x | `modules/ext/configuration.jar` | 8 |
+| nieuwer | `modules/lib/configuration-<versie>.jar` | 8/17 |
+
+`app/lib/jaxb-api.jar` zit in de repo en wordt door PyInstaller meegebundeld via
+`--add-data "app/lib;app/lib"`. Die meegebundelde samengevoegde JAXB 2.3.1
+(API + implementatie + core + activation) is nodig omdat de vendor-bibliotheek
+JAXB verwacht dat niet in elke JRE (met name Java 11/17) meer aanwezig is.
+Zet nooit zelf een `configuration*.jar` in `app/lib`: vendor-jars blijven
+buiten de repo en buiten de exe.

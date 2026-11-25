@@ -32,17 +32,30 @@ def res(*parts):
 APP_LIB = res("app", "lib")
 
 
+def _has_lib_or_ext(path):
+    return (os.path.isdir(os.path.join(path, "lib"))
+            or os.path.isdir(os.path.join(path, "ext")))
+
+
 def _module_dirs():
     """Kandidaat-<installatie>/ringbustool/modules-mappen van de RingBus Tool.
 
-    Volgorde: RINGBUSTOOL_HOME eerst, dan de vaste installatiepaden per platform.
+    RINGBUSTOOL_HOME mag naar de installatiemap, naar de ringbustool-map zelf of
+    naar de modules-map wijzen. Van die kandidaten komt de eerste bestaande map
+    met een lib/- of ext/-submap vooraan; daarna de vaste installatiepaden.
     """
     cands = []
     env = os.environ.get("RINGBUSTOOL_HOME")
     if env:
-        cands.append(os.path.join(env, "ringbustool", "modules"))
-        cands.append(env)
-        cands.append(os.path.join(env, "modules"))
+        env_cands = [os.path.join(env, "ringbustool", "modules"),
+                     os.path.join(env, "modules"),
+                     env]
+        preferred = [m for m in env_cands if _has_lib_or_ext(m)]
+        if preferred:
+            cands.append(preferred[0])
+            cands += [m for m in env_cands if m != preferred[0]]
+        else:
+            cands += env_cands
     if os.name == "nt":
         for base in (os.environ.get("ProgramFiles", r"C:\Program Files"),
                      os.environ.get("ProgramFiles(x86)", r"C:\Program Files (x86)")):
@@ -63,31 +76,53 @@ def _module_dirs():
 
 
 def vendor_jar():
-    """Pad naar configuration-*.jar uit de RingBus Tool-installatie (of app/lib)."""
+    """Pad naar configuration*.jar uit de RingBus Tool-installatie (of app/lib).
+
+    Per modules-map in vaste volgorde: lib/configuration-*.jar (gesorteerd),
+    lib/configuration.jar, ext/configuration-*.jar, ext/configuration.jar,
+    daarna de modules-root. APP_LIB is de ontwikkel-fallback.
+    """
     for modules in _module_dirs():
-        hits = sorted(glob.glob(os.path.join(modules, "lib", "configuration-*.jar")))
-        if hits:
-            return hits[0]
+        for folder in (os.path.join(modules, "lib"),
+                       os.path.join(modules, "ext"),
+                       modules):
+            hits = sorted(glob.glob(os.path.join(folder, "configuration-*.jar")))
+            if hits:
+                return hits[0]
+            plain = os.path.join(folder, "configuration.jar")
+            if os.path.exists(plain):
+                return plain
     hits = sorted(glob.glob(os.path.join(APP_LIB, "configuration-*.jar")))
     if hits:
         return hits[0]
+    plain = os.path.join(APP_LIB, "configuration.jar")
+    if os.path.exists(plain):
+        return plain
     raise RuntimeError(
         "RingBus Tool vendor-bibliotheek (configuration-*.jar) niet gevonden. "
         "Installeer de RingBus Tool, of zet RINGBUSTOOL_HOME naar de installatiemap.")
 
 
-def _jaxb_jar():
-    """jaxb-api.jar uit dezelfde installatie (lib/ dan ext/), anders app/lib."""
+def jaxb_jar():
+    """jaxb-api.jar: eerst app/lib (meegebundeld), dan lib/ en ext/ van de Tool."""
+    bundled = os.path.join(APP_LIB, "jaxb-api.jar")
+    if os.path.exists(bundled):
+        return bundled
     for modules in _module_dirs():
         for sub in ("lib", "ext"):
             p = os.path.join(modules, sub, "jaxb-api.jar")
             if os.path.exists(p):
                 return p
-    return os.path.join(APP_LIB, "jaxb-api.jar")
+    raise RuntimeError(
+        "jaxb-api.jar niet gevonden (app/lib ontbreekt of is onvolledig). "
+        "Herinstalleer de app; een losse RingBus Tool-installatie is niet nodig.")
+
+
+_jaxb_jar = jaxb_jar
 
 
 def jars():
-    return [vendor_jar(), _jaxb_jar()]
+    return [vendor_jar(), jaxb_jar()]
 
 
 def java_exe():
@@ -102,7 +137,7 @@ def java_exe():
 
 def classpath():
     sep = ";" if os.name == "nt" else ":"
-    return sep.join([res("app", "build")] + [j for j in jars() if os.path.exists(j)])
+    return sep.join([res("app", "build")] + jars())
 
 
 # ---------------- sleutels ----------------

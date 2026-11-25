@@ -40,33 +40,57 @@ jobs:
             --add-data "app/build;app/build" `
             --add-data "app/jre;app/jre" `
             --add-data "app/assets;app/assets" `
+            --add-data "app/lib;app/lib" `
             --paths app app/zenix_app.py
           Get-Item dist/ZENiXBridge.exe | Format-List Name,Length
 
-      - name: Controleer dat de binary geen vendor-jar bevat
+      - name: Controleer jar-beleid in de binary
         shell: pwsh
         run: |
+          $exe = "dist/ZENiXBridge.exe"
+          # app/lib is de enige --add-data-bron voor jars; deze guard dekt die
+          # invoer af en is de eerste verdedigingslijn tegen vendor-jars.
+          $vendors = @(Get-ChildItem app/lib -Filter "configuration*.jar" -ErrorAction SilentlyContinue)
+          if ($vendors.Count -gt 0) {
+            throw "vendor-jar hoort niet in de repo: $($vendors.Name -join ', ')"
+          }
           $text = [System.Text.Encoding]::Latin1.GetString(
-            [System.IO.File]::ReadAllBytes("dist/ZENiXBridge.exe"))
-          $jars = Get-ChildItem app/lib -Filter *.jar -ErrorAction SilentlyContinue
-          foreach ($jar in $jars) {
-            if ($text.Contains($jar.Name)) {
-              throw "binary bundelt nog steeds $($jar.Name)"
+            [System.IO.File]::ReadAllBytes($exe))
+          # Scan de binary zelf op vendor-jars onder app/lib (rauwe tekst).
+          $leaked = [regex]::Matches($text, '(?i)app[\\/]lib[\\/]configuration[^\\/*]*\.jar')
+          if ($leaked.Count -gt 0) {
+            throw "binary bevat een vendor-jar: $($leaked[0].Value)"
+          }
+          $jaxbInBinary = $text.Contains("jaxb-api.jar")
+          # Autoritatieve controle: de PyInstaller-archiefindex van de exe.
+          $viewer = Get-Command pyi-archive_viewer -ErrorAction SilentlyContinue
+          if ($viewer) {
+            $listing = & $viewer -l $exe 2>&1
+            if ($LASTEXITCODE -eq 0) {
+              $vendorHits = @($listing | Select-String -Pattern '(?i)configuration[^\\/]*\.jar')
+              if ($vendorHits.Count -gt 0) {
+                throw "binary bevat een vendor-jar: $($vendorHits[0].Line.Trim())"
+              }
+              $jaxbInBinary = @($listing | Select-String -Pattern '(?i)jaxb-api\.jar').Count -gt 0
             }
           }
-          if (-not $jars) { Write-Host "geen vendor-jar in de repo (verwacht)" }
+          if (-not $jaxbInBinary) {
+            throw "binary bundelt jaxb-api.jar niet (--add-data app/lib ontbreekt?)"
+          }
+          Write-Host "geen vendor-jar gebundeld; jaxb-api.jar aanwezig"
 
       - name: Zelftest (enkel met vendor-jar lokaal)
         shell: pwsh
         run: |
-          $jars = Get-ChildItem app/lib -Filter *.jar -ErrorAction SilentlyContinue
-          if (-not $jars) {
-            Write-Host "vendor-jar zit niet in deze publieke repo: zelftest overgeslagen"
+          $vendors = Get-ChildItem app/lib -Filter "configuration*.jar" -ErrorAction SilentlyContinue
+          if (-not $vendors) {
+            Write-Host "geen configuration*.jar in app/lib: zelftest overgeslagen"
             exit 0
           }
           $stage = Join-Path $env:RUNNER_TEMP "ringbustool\modules\lib"
           New-Item -ItemType Directory -Force -Path $stage | Out-Null
-          Copy-Item app/lib/*.jar $stage
+          Copy-Item $vendors $stage
+          Copy-Item app/lib/jaxb-api.jar $stage -ErrorAction SilentlyContinue
           $env:RINGBUSTOOL_HOME = $env:RUNNER_TEMP
           $p = Start-Process -FilePath "dist/ZENiXBridge.exe" -ArgumentList "--selftest" -Wait -PassThru
           Write-Host "exitcode: $($p.ExitCode)"

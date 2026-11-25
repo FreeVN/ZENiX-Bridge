@@ -6,6 +6,7 @@ __pycache__/
 keys.txt
 samples/
 app/lib/*.jar
+!app/lib/jaxb-api.jar
 app/jre/
 /build/
 /dist/

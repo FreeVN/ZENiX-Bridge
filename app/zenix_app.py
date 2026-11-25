@@ -22,7 +22,7 @@ except Exception:                                  # pragma: no cover
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import core
 
-VERSION = "2.0.0"
+VERSION = "2.4.0"
 RED = "#E4002B"
 BLUE = "#2271B1"
 INK = "#1E1E1E"
