@@ -40,33 +40,36 @@ jobs:
             --add-data "app/build;app/build" `
             --add-data "app/jre;app/jre" `
             --add-data "app/assets;app/assets" `
+            --add-data "app/lib;app/lib" `
             --paths app app/zenix_app.py
           Get-Item dist/ZENiXBridge.exe | Format-List Name,Length
 
-      - name: Controleer dat de binary geen vendor-jar bevat
+      - name: Controleer jar-beleid in de binary
         shell: pwsh
         run: |
           $text = [System.Text.Encoding]::Latin1.GetString(
             [System.IO.File]::ReadAllBytes("dist/ZENiXBridge.exe"))
-          $jars = Get-ChildItem app/lib -Filter *.jar -ErrorAction SilentlyContinue
-          foreach ($jar in $jars) {
-            if ($text.Contains($jar.Name)) {
-              throw "binary bundelt nog steeds $($jar.Name)"
-            }
+          $vendors = Get-ChildItem app/lib -Filter "configuration*.jar" -ErrorAction SilentlyContinue
+          if ($vendors) {
+            throw "vendor-jar hoort niet in de repo: $($vendors.Name -join ', ')"
           }
-          if (-not $jars) { Write-Host "geen vendor-jar in de repo (verwacht)" }
+          if (-not $text.Contains("jaxb-api.jar")) {
+            throw "binary bundelt jaxb-api.jar niet (--add-data app/lib ontbreekt?)"
+          }
+          Write-Host "geen vendor-jar gebundeld; jaxb-api.jar aanwezig"
 
       - name: Zelftest (enkel met vendor-jar lokaal)
         shell: pwsh
         run: |
-          $jars = Get-ChildItem app/lib -Filter *.jar -ErrorAction SilentlyContinue
-          if (-not $jars) {
-            Write-Host "vendor-jar zit niet in deze publieke repo: zelftest overgeslagen"
+          $vendors = Get-ChildItem app/lib -Filter "configuration*.jar" -ErrorAction SilentlyContinue
+          if (-not $vendors) {
+            Write-Host "geen configuration*.jar in app/lib: zelftest overgeslagen"
             exit 0
           }
           $stage = Join-Path $env:RUNNER_TEMP "ringbustool\modules\lib"
           New-Item -ItemType Directory -Force -Path $stage | Out-Null
-          Copy-Item app/lib/*.jar $stage
+          Copy-Item $vendors $stage
+          Copy-Item app/lib/jaxb-api.jar $stage -ErrorAction SilentlyContinue
           $env:RINGBUSTOOL_HOME = $env:RUNNER_TEMP
           $p = Start-Process -FilePath "dist/ZENiXBridge.exe" -ArgumentList "--selftest" -Wait -PassThru
           Write-Host "exitcode: $($p.ExitCode)"
