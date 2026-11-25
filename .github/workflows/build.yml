@@ -57,7 +57,7 @@ jobs:
           $text = [System.Text.Encoding]::Latin1.GetString(
             [System.IO.File]::ReadAllBytes($exe))
           # Scan de binary zelf op vendor-jars onder app/lib (rauwe tekst).
-          $leaked = [regex]::Matches($text, '(?i)app[\\/]lib[\\/]configuration[^\\/]*\.jar')
+          $leaked = [regex]::Matches($text, '(?i)app[\\/]lib[\\/]configuration[^\\/*]*\.jar')
           if ($leaked.Count -gt 0) {
             throw "binary bevat een vendor-jar: $($leaked[0].Value)"
           }
